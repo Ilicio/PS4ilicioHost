@@ -11,6 +11,10 @@
   <img src="https://img.shields.io/badge/idioma-pt--BR-0b0e17?style=for-the-badge&color=4d8eff" alt="Idioma: pt-BR">
 </p>
 
+<p align="center">
+  <img src="imagens/tela-ps4-ilicio-host.png" alt="Tela inicial do ILICIO PS4 Offline Host" width="100%">
+</p>
+
 > [!NOTE]
 > Este projeto é destinado a fins educacionais, de preservação e pesquisa. Utilize por sua conta e risco. Não possui qualquer afiliação ou endosso da Sony Interactive Entertainment.
 
