@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="icon" type="image/png" href="ps.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ILICIO PS4 Offline Host</title>
+    <style>
+        :root {
+            --bg: #0b0e17;
+            --bg-elevated: #111726;
+            --panel: #141b2d;
+            --panel-hover: #1b243b;
+            --line: #232d47;
+            --line-bright: #33436b;
+            --text: #f3f6fc;
+            --muted: #a9b4cc;
+            --dim: #7381a3;
+            --accent: #4d8eff;
+            --accent-2: #8b5cf6;
+            --accent-soft: rgba(77, 142, 255, .14);
+            --ok: #34d399;
+        }
+
+        * { box-sizing: border-box; }
+        html { background: var(--bg); }
+        html, body { margin: 0; min-height: 100%; }
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(ellipse at top, rgba(77, 142, 255, .14), transparent 55%),
+                linear-gradient(rgba(77, 142, 255, .04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(77, 142, 255, .04) 1px, transparent 1px);
+            background-size: 100% 100%, 36px 36px, 36px 36px;
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        a { color: inherit; }
+
+        .app {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            margin: 0 auto;
+            max-width: 1180px;
+            min-height: 100vh;
+            padding: 18px 26px 16px;
+        }
+
+        /* Top status bar */
+        .bar {
+            align-items: center;
+            background: var(--bg-elevated);
+            border: 1px solid var(--line-bright);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+            display: -webkit-flex;
+            display: flex;
+            font-size: 13px;
+            justify-content: space-between;
+            letter-spacing: .08em;
+            padding: 12px 18px;
+            text-transform: uppercase;
+        }
+        .bar-brand {
+            align-items: center;
+            display: -webkit-flex;
+            display: flex;
+            font-weight: 600;
+        }
+        .bar b { color: var(--accent); font-weight: 700; margin-right: 6px; }
+        .bar-ready {
+            background: rgba(52, 211, 153, .12);
+            border: 1px solid rgba(52, 211, 153, .35);
+            border-radius: 999px;
+            color: var(--ok);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+        }
+        .bar-ready::before { color: var(--ok); content: "\25CF "; }
+
+        .layout {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex: 1 0 auto;
+            flex: 1 0 auto;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            padding: 26px 0 0;
+        }
+
+        /* Header */
+        .hero {
+            -webkit-align-items: center;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(20, 27, 45, .95), rgba(17, 23, 38, .9));
+            border: 1px solid var(--line);
+            border-top: 2px solid var(--accent);
+            border-radius: 14px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .25);
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            overflow: hidden;
+            padding: 20px 26px;
+            position: relative;
+        }
+        .hero-content {
+            -webkit-flex: 1 1 auto;
+            flex: 1 1 auto;
+            min-width: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-art {
+            -webkit-flex-shrink: 0;
+            flex-shrink: 0;
+            margin: -10px -6px -20px 24px;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-art img {
+            display: block;
+            -webkit-filter: drop-shadow(0 10px 22px rgba(0, 0, 0, .55));
+            filter: drop-shadow(0 10px 22px rgba(0, 0, 0, .55));
+            height: auto;
+            max-height: 200px;
+            opacity: .92;
+            width: auto;
+        }
+        .kicker {
+            color: var(--accent);
+            font-family: Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+            letter-spacing: .1em;
+            margin: 0 0 10px;
+        }
+        h1 {
+            font-size: clamp(32px, 4.6vw, 52px);
+            font-weight: 700;
+            letter-spacing: -.03em;
+            line-height: 1.08;
+            margin: 0;
+        }
+        h1 em { color: var(--accent); font-style: normal; }
+        .sub { color: var(--muted); font-size: 17px; margin: 10px 0 0; max-width: 720px; }
+        .boot {
+            color: var(--dim);
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            font-family: Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+            list-style: none;
+            margin: 16px 0 0;
+            padding: 0;
+        }
+        .boot li {
+            background: rgba(11, 14, 23, .6);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            margin: 4px 10px 4px 0;
+            padding: 5px 10px;
+        }
+        .boot b { color: var(--ok); font-weight: 600; }
+
+        /* Menu */
+        .menu {
+            background: var(--bg-elevated);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            margin-top: 20px;
+            padding: 18px;
+        }
+        .menu-top {
+            align-items: center;
+            border-bottom: 1px solid var(--line);
+            display: -webkit-flex;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding: 0 4px 12px;
+        }
+        .menu-title {
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+        .menu-hint {
+            color: var(--dim);
+            font-family: Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+        }
+        .grid {
+            display: grid;
+            grid-gap: 10px;
+            gap: 10px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .row {
+            align-items: center;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            display: -webkit-flex;
+            display: flex;
+            min-height: 78px;
+            padding: 14px 16px;
+            text-decoration: none;
+            transition: background-color .15s ease, border-color .15s ease, transform .12s ease;
+        }
+        .row:hover, .row:focus {
+            background: var(--panel-hover);
+            border-color: var(--accent);
+            outline: 0;
+            transform: translateY(-1px);
+        }
+        .row:focus {
+            box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+        }
+        .num {
+            background: var(--accent-soft);
+            border: 1px solid rgba(77, 142, 255, .3);
+            border-radius: 8px;
+            color: var(--accent);
+            font-family: Consolas, "Liberation Mono", monospace;
+            font-size: 14px;
+            font-weight: 700;
+            margin-right: 14px;
+            min-width: 40px;
+            padding: 6px 0;
+            text-align: center;
+        }
+        .row:hover .num, .row:focus .num {
+            background: var(--accent);
+            color: #0b0e17;
+        }
+        .name { color: var(--text); display: block; font-size: 19px; font-weight: 600; line-height: 1.25; }
+        .meta { color: var(--muted); display: block; font-size: 13px; margin-top: 3px; }
+        .go {
+            color: var(--accent);
+            font-family: Consolas, "Liberation Mono", monospace;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: auto;
+            opacity: 0;
+            padding-left: 12px;
+            white-space: nowrap;
+        }
+        .row:hover .go, .row:focus .go { opacity: 1; }
+
+        /* Footer */
+        .foot {
+            border-top: 1px solid var(--line);
+            color: var(--dim);
+            font-size: 13px;
+            margin-top: auto;
+            padding: 18px 4px 4px;
+            text-align: center;
+        }
+        .foot a { color: var(--muted); font-weight: 600; text-decoration: none; }
+        .foot a:hover, .foot a:focus { color: var(--accent); text-decoration: underline; }
+
+        @media (max-width: 760px) {
+            body { font-size: 15px; }
+            .app { padding: 10px 12px; }
+            .bar { font-size: 11px; padding: 10px 12px; }
+            .layout { padding-top: 16px; }
+            .hero { padding: 18px 16px; }
+            .hero-art { margin: -8px -4px -18px 12px; }
+            .hero-art img { max-height: 120px; }
+            h1 { font-size: 32px; }
+            .sub { font-size: 15px; }
+            .grid { grid-template-columns: 1fr; }
+            .row { min-height: 68px; }
+            .menu-hint { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="bar">
+            <span class="bar-brand"><b>ILICIO</b> PS4 Offline Host</span>
+            <span class="bar-ready">pronto</span>
+        </header>
+
+        <main class="layout">
+            <section class="hero">
+                <div class="hero-content">
+                    <p class="kicker">$ ./launch --selecionar-host</p>
+                    <h1>Escolha o <em>firmware</em></h1>
+                    <p class="sub">Selecione o host correspondente ao firmware instalado no seu PlayStation 4.</p>
+                    <ul class="boot">
+                        <li>[ <b>ok</b> ] 7 rotas de host detectadas</li>
+                        <li>[ <b>ok</b> ] cache offline pronto</li>
+                    </ul>
+                </div>
+                <div class="hero-art">
+                    <img src="imagens/kratos.png" alt="Kratos">
+                </div>
+            </section>
+
+            <section class="menu" aria-label="Menu de hosts por firmware">
+                <div class="menu-top">
+                    <span class="menu-title">Rotas disponíveis</span>
+                    <span class="menu-hint">&uarr; &darr; mover &nbsp; X selecionar</span>
+                </div>
+                <nav class="grid">
+                    <a class="row" href="1352/index.html">
+                        <span class="num">01</span>
+                        <span><span class="name">FW 13.02–13.52</span><span class="meta">SlopKit GoldHEN // host offline</span></span>
+                        <span class="go">[ SELECIONAR ]</span>
+                    </a>
+                    <a class="row" href="1300/index.html">
+                        <span class="num">02</span>
+                        <span><span class="name">FW 11.00–12.02 / 12.50–13.00</span><span class="meta">SlopKit WebKit // compilação atual</span></span>
+                        <span class="go">[ SELECIONAR ]</span>
+                    </a>
+                    <a class="row" href="css/version-selector.html">
+                        <span class="num">03</span>
+                        <span><span class="name">FW 6.00–11.02</span><span class="meta">CSSFontFace // host GoldHEN</span></span>
+                        <span class="go">[ SELECIONAR ]</span>
+                    </a>
+                    <a class="row" href="900/version-selector.html">
+                        <span class="num">04</span>
+                        <span><span class="name">FW 9.00–9.60</span><span class="meta">PSFree / Lapse // host GoldHEN</span></span>
+                        <span class="go">[ SELECIONAR ]</span>
+                    </a>
+                    <a class="row" href="700/version-selector.html">
+                        <span class="num">05</span>
+                        <span><span class="name">FW 7.00–8.52</span><span class="meta">PSFree / Lapse // host GoldHEN</span></span>
+                        <span class="go">[ SELECIONAR ]</span>
+                    </a>
+                    <a class="row" href="672/index.html">
+                        <span class="num">06</span>
+                        <span><span class="name">FW 6.72</span><span class="meta">Host dedicado // payloads utilitários</span></span>
+                        <span class="go">[ SELECIONAR ]</span>
+                    </a>
+                    <a class="row" href="505/index.html">
+                        <span class="num">07</span>
+                        <span><span class="name">FW 5.05</span><span class="meta">Host dedicado // payloads utilitários</span></span>
+                        <span class="go">[ SELECIONAR ]</span>
+                    </a>
+                </nav>
+            </section>
+
+            <footer class="foot">
+                Autor: <a href="https://github.com/Ilicio" target="_blank" rel="noopener">Ilício</a> // Youtube: <a href="https://www.youtube.com/@iliciojr" target="_blank" rel="noopener">@iliciojr</a>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        (function () {
+            // Do not intercept arrow keys: the PS4 browser moves its visible
+            // focus pointer natively (spatial navigation). This only places
+            // the initial focus so the cursor is visible right after load.
+            var first = document.querySelector('.row');
+            if (first) first.focus();
+        })();
+    </script>
+</body>
+</html>

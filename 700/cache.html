@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR" manifest="PSPulse.cache">
+
+<head>
+    <link rel="icon" type="image/png" href="../ps.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ILICIO PS4 Offline Host // FW 7.00-8.52 / Cache</title>
+    <script>history.replaceState(null, null, 'index.html');</script>
+    <style>
+        :root {
+            --bg: #0b0e17;
+            --bg-elevated: #111726;
+            --panel: #141b2d;
+            --line: #232d47;
+            --line-bright: #33436b;
+            --text: #f3f6fc;
+            --muted: #a9b4cc;
+            --dim: #7381a3;
+            --accent: #4d8eff;
+            --ok: #34d399;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background: var(--bg); }
+        html, body { min-height: 100%; }
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(ellipse at top, rgba(77, 142, 255, .14), transparent 55%),
+                linear-gradient(rgba(77, 142, 255, .04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(77, 142, 255, .04) 1px, transparent 1px);
+            background-size: 100% 100%, 36px 36px, 36px 36px;
+            color: var(--text);
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        a { color: inherit; }
+
+        .app { display: -webkit-flex; display: flex; -webkit-flex: 1 0 auto; flex: 1 0 auto; -webkit-flex-direction: column; flex-direction: column; margin: 0 auto; max-width: 920px; padding: 18px 26px 16px; width: 100%; }
+
+        .bar {
+            align-items: center;
+            background: var(--bg-elevated);
+            border: 1px solid var(--line-bright);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+            display: -webkit-flex;
+            display: flex;
+            font-size: 13px;
+            justify-content: space-between;
+            letter-spacing: .08em;
+            padding: 12px 18px;
+            text-transform: uppercase;
+        }
+        .bar-brand { font-weight: 600; }
+        .bar b { color: var(--accent); font-weight: 700; margin-right: 6px; }
+        .bar-fw {
+            background: rgba(77, 142, 255, .14);
+            border: 1px solid rgba(77, 142, 255, .35);
+            border-radius: 999px;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+        }
+        .bar-fw::before { color: var(--accent); content: "\25CF "; }
+
+        .layout { display: -webkit-flex; display: flex; -webkit-flex: 1 0 auto; flex: 1 0 auto; -webkit-flex-direction: column; flex-direction: column; justify-content: center; padding: 20px 0 0; }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(20, 27, 45, .95), rgba(17, 23, 38, .9));
+            border: 1px solid var(--line);
+            border-top: 2px solid var(--accent);
+            border-radius: 14px;
+            padding: 24px 26px;
+        }
+        .kicker { color: var(--accent); font-family: Consolas, "Liberation Mono", monospace; font-size: 13px; letter-spacing: .1em; margin: 0 0 10px; }
+        h1 { font-size: clamp(28px, 4.5vw, 46px); font-weight: 700; letter-spacing: -.03em; line-height: 1.08; margin: 0; }
+        h1 em { color: var(--accent); font-style: normal; }
+        .boot { color: var(--dim); display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; font-family: Consolas, "Liberation Mono", monospace; font-size: 13px; list-style: none; margin: 16px 0 0; }
+        .boot li { background: rgba(11, 14, 23, .6); border: 1px solid var(--line); border-radius: 8px; margin: 4px 10px 4px 0; padding: 5px 10px; }
+        .boot b { color: var(--ok); font-weight: 600; }
+
+        .progress-container { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 14px; margin-top: 20px; padding: 20px 22px; width: 100%; }
+        .progress-label { color: var(--accent); font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+        .progress-wrapper { background: var(--bg); border: 1px solid var(--line-bright); border-radius: 10px; padding: 5px; }
+        .progress-bar { background: var(--panel); border-radius: 8px; height: 54px; overflow: hidden; position: relative; }
+        .progress-fill { background: linear-gradient(90deg, var(--accent), #8b5cf6); height: 100%; transition: width .15s ease; width: 0; }
+        .progress-text { color: var(--text); font-family: Consolas, "Liberation Mono", monospace; font-size: 19px; font-weight: 700; left: 50%; position: absolute; text-shadow: 0 1px 8px rgba(0, 0, 0, .85); top: 50%; transform: translate(-50%, -50%); z-index: 3; }
+        .status-message { color: var(--muted); font-size: 14px; margin-top: 12px; }
+
+        .foot { border-top: 1px solid var(--line); color: var(--dim); font-size: 13px; margin-top: auto; padding: 18px 4px 4px; text-align: center; }
+        .foot a { color: var(--muted); font-weight: 600; text-decoration: none; }
+        .foot a:hover, .foot a:focus { color: var(--accent); text-decoration: underline; }
+
+        @media (max-width: 700px) {
+            body { overflow: auto; }
+            .app { padding: 10px 12px; }
+            .bar { font-size: 11px; padding: 10px 12px; }
+            .layout { padding-top: 14px; }
+            h1 { font-size: 30px; }
+            .progress-bar { height: 48px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header class="bar">
+            <span class="bar-brand"><b>ILICIO</b> PS4 Offline Host</span>
+            <span class="bar-fw">atualização de cache</span>
+        </header>
+
+        <main class="layout">
+            <section class="hero">
+                <p class="kicker">$ ./cache --instalar</p>
+                <h1>Carregando <em>cache offline</em></h1>
+                <ul class="boot">
+                    <li>[ <b>ok</b> ] cadeia PSFree 1.7 pronta</li>
+                    <li>[ <b>..</b> ] baixando arquivos do host</li>
+                </ul>
+            </section>
+
+            <section class="progress-container">
+                <div class="progress-label" id="progress">Carregando... Por favor, aguarde!</div>
+                <div class="progress-wrapper">
+                    <div class="progress-bar" id="myProgress">
+                        <div class="progress-fill" id="myBar"></div>
+                        <div class="progress-text" id="progressText">0%</div>
+                    </div>
+                </div>
+                <div class="status-message">Inicializando sistema de cache...</div>
+            </section>
+        </main>
+
+        <footer class="foot">
+            Autor: <a href="https://github.com/Ilicio" target="_blank" rel="noopener">Ilício</a> // Youtube: <a href="https://www.youtube.com/@iliciojr" target="_blank" rel="noopener">@iliciojr</a>
+        </footer>
+    </div>
+
+    <script>
+        (function () {
+            var appCache = window.applicationCache;
+            var progressLabel = document.getElementById('progress');
+            var progressBar = document.getElementById('myBar');
+            var progressText = document.getElementById('progressText');
+            var redirectPending = false;
+
+            function setCached(value) {
+                try { localStorage.is755BCached = value ? 'true' : 'false'; } catch (error) {}
+            }
+            function setProgress(value) {
+                var progress = Math.max(0, Math.min(100, value));
+                progressBar.style.width = progress + '%';
+                progressText.innerHTML = progress + '%';
+            }
+            function openHost(message) {
+                if (redirectPending) return;
+                redirectPending = true;
+                setCached(true);
+                setProgress(100);
+                progressLabel.innerHTML = message;
+                setTimeout(function () { window.location.replace('index.html'); }, 1200);
+            }
+            if (!appCache) {
+                progressLabel.innerHTML = 'O cache offline não é compatível com este navegador.';
+                return;
+            }
+            if (appCache.status === appCache.DOWNLOADING) setCached(false);
+            appCache.ondownloading = function () {
+                setCached(false);
+                progressLabel.innerHTML = 'Iniciando gravação do cache!';
+            };
+            appCache.onprogress = function (event) {
+                if (event.lengthComputable && event.total > 0)
+                    setProgress(Math.round(100 * event.loaded / event.total));
+            };
+            appCache.oncached = function () { openHost('Página salva no cache com sucesso!'); };
+            appCache.onupdateready = function () {
+                try { appCache.swapCache(); } catch (error) {}
+                openHost('Cache atualizado com sucesso!');
+            };
+            appCache.onnoupdate = function () { openHost('Cache offline pronto'); };
+            appCache.onerror = function () {
+                setCached(false);
+                progressLabel.innerHTML = 'Falha no cache offline. Limpe os dados do navegador e recarregue conectado à internet.';
+            };
+            appCache.onobsolete = appCache.onerror;
+        }());
+    </script>
+</body>
+
+</html>

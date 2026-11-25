@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ILICIO PS4 Offline Host // FW 6.00-11.02 / Versão</title>
+    <link rel="icon" type="image/png" href="../ps.png">
+    <style>
+        :root {
+            --bg: #0b0e17;
+            --bg-elevated: #111726;
+            --panel: #141b2d;
+            --panel-hover: #1b243b;
+            --line: #232d47;
+            --line-bright: #33436b;
+            --text: #f3f6fc;
+            --muted: #a9b4cc;
+            --dim: #7381a3;
+            --accent: #4d8eff;
+            --ok: #34d399;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background: var(--bg); }
+        html, body { min-height: 100%; }
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(ellipse at top, rgba(77, 142, 255, .14), transparent 55%),
+                linear-gradient(rgba(77, 142, 255, .04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(77, 142, 255, .04) 1px, transparent 1px);
+            background-size: 100% 100%, 36px 36px, 36px 36px;
+            color: var(--text);
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        a { color: inherit; }
+
+        .app { display: -webkit-flex; display: flex; -webkit-flex: 1 0 auto; flex: 1 0 auto; -webkit-flex-direction: column; flex-direction: column; margin: 0 auto; max-width: 1180px; padding: 18px 26px 16px; width: 100%; }
+
+        .bar {
+            align-items: center;
+            background: var(--bg-elevated);
+            border: 1px solid var(--line-bright);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+            display: -webkit-flex;
+            display: flex;
+            font-size: 13px;
+            justify-content: space-between;
+            letter-spacing: .08em;
+            padding: 12px 18px;
+            text-transform: uppercase;
+        }
+        .bar-brand { font-weight: 600; }
+        .bar b { color: var(--accent); font-weight: 700; margin-right: 6px; }
+        .bar-fw {
+            background: rgba(52, 211, 153, .12);
+            border: 1px solid rgba(52, 211, 153, .35);
+            border-radius: 999px;
+            color: var(--ok);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+        }
+        .bar-fw::before { color: var(--ok); content: "\25CF "; }
+
+        .layout { display: -webkit-flex; display: flex; -webkit-flex: 1 0 auto; flex: 1 0 auto; -webkit-flex-direction: column; flex-direction: column; padding: 24px 0 0; }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(20, 27, 45, .95), rgba(17, 23, 38, .9));
+            border: 1px solid var(--line);
+            border-top: 2px solid var(--accent);
+            border-radius: 14px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .25);
+            padding: 24px 26px;
+        }
+        .kicker { color: var(--accent); font-family: Consolas, "Liberation Mono", monospace; font-size: 13px; letter-spacing: .1em; margin: 0 0 10px; }
+        h1 { font-size: clamp(30px, 4.5vw, 50px); font-weight: 700; letter-spacing: -.03em; line-height: 1.08; margin: 0; }
+        h1 em { color: var(--accent); font-style: normal; }
+        .sub { color: var(--muted); font-size: 17px; margin: 10px 0 0; max-width: 720px; }
+        .boot { color: var(--dim); display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; font-family: Consolas, "Liberation Mono", monospace; font-size: 13px; list-style: none; margin: 16px 0 0; }
+        .boot li { background: rgba(11, 14, 23, .6); border: 1px solid var(--line); border-radius: 8px; margin: 4px 10px 4px 0; padding: 5px 10px; }
+        .boot b { color: var(--ok); font-weight: 600; }
+
+        .menu { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 14px; margin-top: 20px; padding: 18px; }
+        .menu-top {
+            align-items: center;
+            border-bottom: 1px solid var(--line);
+            display: -webkit-flex;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding: 0 4px 12px;
+        }
+        .menu-title { color: var(--text); font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+        .menu-hint { color: var(--dim); font-family: Consolas, "Liberation Mono", monospace; font-size: 13px; }
+        .version-grid { display: grid; grid-gap: 10px; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+        .version-card {
+            align-items: center;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            cursor: pointer;
+            display: -webkit-flex;
+            display: flex;
+            min-height: 136px;
+            padding: 18px 20px;
+            transition: background-color .15s ease, border-color .15s ease, transform .12s ease;
+        }
+        .version-card:hover, .version-card:focus {
+            background: var(--panel-hover);
+            border-color: var(--accent);
+            outline: 0;
+        }
+        .version-card:focus { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent); }
+        .card-index {
+            background: rgba(77, 142, 255, .14);
+            border: 1px solid rgba(77, 142, 255, .3);
+            border-radius: 8px;
+            color: var(--accent);
+            font-family: Consolas, "Liberation Mono", monospace;
+            font-size: 14px;
+            font-weight: 700;
+            margin-right: 16px;
+            min-width: 40px;
+            padding: 6px 0;
+            text-align: center;
+        }
+        .version-card:hover .card-index, .version-card:focus .card-index { background: var(--accent); color: #0b0e17; }
+        .version-badge { color: var(--dim); display: block; font-size: 11px; font-weight: 700; letter-spacing: .12em; margin-bottom: 5px; text-transform: uppercase; }
+        .version-card.latest .version-badge { color: var(--ok); }
+        .version-title { color: var(--text); font-size: 21px; font-weight: 700; line-height: 1.2; }
+        .version-number { color: var(--accent); font-size: 16px; }
+        .version-description { color: var(--muted); display: block; font-size: 13px; line-height: 1.5; margin-top: 7px; }
+        .card-action { color: var(--accent); font-family: Consolas, "Liberation Mono", monospace; font-size: 12px; font-weight: 600; margin-left: auto; padding-left: 12px; white-space: nowrap; }
+
+        .foot { border-top: 1px solid var(--line); color: var(--dim); font-size: 13px; margin-top: auto; padding: 18px 4px 4px; text-align: center; }
+        .foot a { color: var(--muted); font-weight: 600; text-decoration: none; }
+        .foot a:hover, .foot a:focus { color: var(--accent); text-decoration: underline; }
+        .foot div { margin: 2px 0; }
+
+        @media (max-width: 760px) {
+            body { overflow: auto; font-size: 15px; }
+            .app { padding: 10px 12px; }
+            .bar { font-size: 11px; padding: 10px 12px; }
+            .layout { padding-top: 16px; }
+            .hero { padding: 18px 16px; }
+            h1 { font-size: 30px; }
+            .sub { font-size: 15px; }
+            .version-grid { grid-template-columns: 1fr; }
+            .version-card { min-height: 108px; }
+            .menu-hint { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header class="bar">
+            <span class="bar-brand"><b>ILICIO</b> PS4 Offline Host</span>
+            <span class="bar-fw">fw 6.00-11.02 pronto</span>
+        </header>
+
+        <main class="layout">
+            <section class="hero">
+                <p class="kicker">$ select --goldhen</p>
+                <h1>Escolha o <em>GoldHEN</em></h1>
+                <p class="sub">Selecione a versão do GoldHEN para salvar em cache e usar. O host CSSFontFace é compatível com PS4 firmware 6.00-11.02.</p>
+                <ul class="boot">
+                    <li>[ <b>ok</b> ] cadeia CSSFontFace pronta</li>
+                    <li>[ <b>ok</b> ] 2 compilações disponíveis</li>
+                </ul>
+            </section>
+
+            <section class="menu" aria-label="Versões do GoldHEN">
+                <div class="menu-top">
+                    <span class="menu-title">Versões disponíveis</span>
+                    <span class="menu-hint">&uarr; &darr; mover &nbsp; X selecionar</span>
+                </div>
+                <div class="version-grid">
+                    <div class="version-card latest" onclick="selectVersion('v2.4b18.12')" tabindex="0"
+                        data-version="latest">
+                        <span class="card-index">01</span>
+                        <span>
+                            <span class="version-badge latest">Mais recente</span>
+                            <span class="version-title">GoldHEN <span class="version-number">v2.4b18.12</span></span>
+                            <span class="version-description">Versão mais recente com estabilidade aprimorada, novos recursos e melhor compatibilidade. Recomendada para a maioria dos usuários.</span>
+                        </span>
+                        <span class="card-action">[ SELECIONAR ]</span>
+                    </div>
+
+                    <div class="version-card" onclick="selectVersion('v2.4b18.10')" tabindex="0" data-version="stable">
+                        <span class="card-index">02</span>
+                        <span>
+                            <span class="version-badge">Estável</span>
+                            <span class="version-title">GoldHEN <span class="version-number">v2.4b18.10</span></span>
+                            <span class="version-description">Versão estável anterior com confiabilidade comprovada. Escolha esta se a versão mais recente causar problemas ou se preferir estabilidade máxima.</span>
+                        </span>
+                        <span class="card-action">[ SELECIONAR ]</span>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="foot">
+                <div>Autor: <a href="https://github.com/Ilicio" target="_blank" rel="noopener">Ilício</a> // Youtube: <a href="https://www.youtube.com/@iliciojr" target="_blank" rel="noopener">@iliciojr</a></div>
+                <div>Upstream: <a href="https://github.com/itskenethb?tab=repositories" target="_blank" rel="noopener">itskenethb</a></div>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        function selectVersion(version) {
+            // Store the selected version in localStorage
+            localStorage.setItem('selectedGoldHENVersion', version);
+
+            // Redirect to appropriate cache page based on version
+            if (version === 'v2.4b18.12') {
+                window.location.href = 'latest/index.html';
+            } else if (version === 'v2.4b18.10') {
+                window.location.href = 'stable/index.html';
+            }
+        }
+
+        (function () {
+            var cards = document.querySelectorAll('.version-card');
+            var currentFocus = 0;
+
+            function eventKey(event) {
+                return event.key || event.keyIdentifier || '';
+            }
+
+            function eventCode(event) {
+                return event.which || event.keyCode || 0;
+            }
+
+            function isPrevious(key, code) {
+                return key === 'ArrowLeft' || key === 'ArrowUp' ||
+                    key === 'Left' || key === 'Up' ||
+                    key === 'UIKeyInputLeftArrow' ||
+                    key === 'UIKeyInputUpArrow' ||
+                    code === 37 || code === 38;
+            }
+
+            function isNext(key, code) {
+                return key === 'ArrowRight' || key === 'ArrowDown' ||
+                    key === 'Right' || key === 'Down' ||
+                    key === 'UIKeyInputRightArrow' ||
+                    key === 'UIKeyInputDownArrow' ||
+                    code === 39 || code === 40;
+            }
+
+            function isSelect(key, code) {
+                return key === 'Enter' || key === ' ' ||
+                    key === 'Spacebar' || key === 'U+000D' ||
+                    code === 13 || code === 32;
+            }
+
+            function focusCard(index) {
+                if (!cards.length) return;
+                currentFocus = index;
+                cards[currentFocus].focus();
+            }
+
+            for (var index = 0; index < cards.length; index++) {
+                (function (card, cardIndex) {
+                    card.addEventListener('focus', function () {
+                        currentFocus = cardIndex;
+                    }, false);
+                    card.addEventListener('mousedown', function () {
+                        card.style.transform = 'translateY(-2px) scale(0.98)';
+                    }, false);
+                    card.addEventListener('mouseup', function () {
+                        card.style.transform = 'translateY(0) scale(1)';
+                    }, false);
+                    card.addEventListener('mouseleave', function () {
+                        card.style.transform = 'translateY(0) scale(1)';
+                    }, false);
+                    card.addEventListener('blur', function () {
+                        card.style.transform = 'translateY(0) scale(1)';
+                    }, false);
+                }(cards[index], index));
+            }
+
+            document.addEventListener('keydown', function (event) {
+                var key = eventKey(event);
+                var code = eventCode(event);
+
+                if (isPrevious(key, code)) {
+                    focusCard(currentFocus > 0 ?
+                        currentFocus - 1 : cards.length - 1);
+                } else if (isNext(key, code)) {
+                    focusCard(currentFocus < cards.length - 1 ?
+                        currentFocus + 1 : 0);
+                } else if (isSelect(key, code)) {
+                    event.preventDefault();
+                    if (cards[currentFocus]) cards[currentFocus].click();
+                }
+            }, false);
+
+            if (cards.length) focusCard(0);
+        }());
+    </script>
+</body>
+</html>

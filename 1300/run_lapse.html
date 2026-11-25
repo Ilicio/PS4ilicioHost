@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR" manifest="cache.manifest">
+<head>
+    <link rel="icon" type="image/png" href="../ps.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ILICIO PS4 Offline Host // 11.00-13.00 Lapse</title>
+<style>
+    :root {
+        --bg: #0b0e17;
+        --bg-elevated: #111726;
+        --panel: #141b2d;
+        --line: #232d47;
+        --line-bright: #33436b;
+        --text: #f3f6fc;
+        --muted: #a9b4cc;
+        --dim: #7381a3;
+        --accent: #4d8eff;
+        --ok: #34d399;
+        --red: #f87171;
+        --amber: #fbbf24;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: var(--bg); }
+    html, body { min-height: 100%; }
+    body {
+        background-color: var(--bg);
+        background-image:
+            radial-gradient(ellipse at top, rgba(77, 142, 255, .14), transparent 55%),
+            linear-gradient(rgba(77, 142, 255, .04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(77, 142, 255, .04) 1px, transparent 1px);
+        background-size: 100% 100%, 36px 36px, 36px 36px;
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.45;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .app { margin: 0 auto; max-width: 1180px; padding: 18px 26px 16px; width: 100%; }
+
+    /* Top status bar */
+    .bar {
+        align-items: center;
+        background: var(--bg-elevated);
+        border: 1px solid var(--line-bright);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+        display: -webkit-flex;
+        display: flex;
+        font-size: 13px;
+        justify-content: space-between;
+        letter-spacing: .08em;
+        padding: 12px 18px;
+        text-transform: uppercase;
+    }
+    .bar-brand { font-weight: 600; }
+    .bar b { color: var(--accent); font-weight: 700; margin-right: 6px; }
+    .bar-chain {
+        background: rgba(77, 142, 255, .14);
+        border: 1px solid rgba(77, 142, 255, .35);
+        border-radius: 999px;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 12px;
+    }
+    .bar-chain::before { color: var(--accent); content: "\25CF "; }
+
+    #state { color: var(--accent); font-size: 21px; font-weight: 600; line-height: 1.25; margin: 18px 0 12px; }
+    .ok { color: var(--ok); }
+    .bad { color: var(--red); }
+    .warn { color: var(--amber); }
+
+    /* chain JS scrolls this element - keep overflow and a fixed height */
+    #out {
+        background: var(--bg-elevated);
+        border: 1px solid var(--line-bright);
+        border-radius: 12px;
+        color: var(--text);
+        font-family: Consolas, "Liberation Mono", monospace;
+        font-size: 13px;
+        line-height: 1.45;
+        height: calc(100vh - 170px);
+        overflow-y: auto;
+        padding: 14px 16px;
+        white-space: pre-wrap;
+    }
+
+    @media (max-width: 760px) {
+        .app { padding: 10px 12px; }
+        .bar { font-size: 11px; padding: 10px 12px; }
+        #state { font-size: 18px; margin: 14px 0 8px; }
+        #out { height: calc(100vh - 135px); font-size: 12px; }
+    }
+</style>
+</head>
+<body>
+    <div class="app">
+        <header class="bar">
+            <span class="bar-brand"><b>ILICIO</b> PS4 Offline Host</span>
+            <span class="bar-chain">cadeia lapse</span>
+        </header>
+
+        <div id="state">carregando cadeia lapse...</div>
+        <div id="out"></div>
+    </div>
+<script type="module">import "./chain_lapse.js";</script>
+<script>
+// PSPULSE: bounded auto-reload when the primitive gives up.
+// Repeated SSV placement misses mean this page-load heap layout does not
+// suit the groom, and only a fresh load reshuffles it (PS4 WebKit exposes
+// no GC). The chain reports ceiling exhaustion as "attempt-ceiling" in the
+// visible log on both lapse and poops runners; on sight, reload up to 2
+// times, then stop and leave FAILED visible for manual retry.
+// The budget write must verifiably persist, otherwise a broken
+// sessionStorage would loop forever -- fail closed instead.
+// Upstream core.js / chain_*.js are NOT modified.
+(function () {
+    var fwMatch = /PlayStation\s+4[\/ ](\d+\.\d+)/.exec(navigator.userAgent || "");
+    var firmwareKey = fwMatch ? fwMatch[1] : "unknown";
+    var KEY = "pspulse-slopkit-reloads:" + location.pathname + ":" + firmwareKey;
+    var MAX = 2;
+    var WINDOW_MS = 10 * 60 * 1000;
+    var handled = false;
+    function readBudget() {
+        var rec = null;
+        try { rec = JSON.parse(sessionStorage.getItem(KEY) || "null"); } catch (e) { rec = null; }
+        var now = Date.now();
+        if (!rec || typeof rec.n !== "number" || (now - rec.t) > WINDOW_MS) return { n: 0, t: now };
+        return rec;
+    }
+    function spendBudget() {
+        var rec = readBudget();
+        rec.n++;
+        rec.t = Date.now();
+        try {
+            sessionStorage.setItem(KEY, JSON.stringify(rec));
+            var check = JSON.parse(sessionStorage.getItem(KEY) || "null");
+            if (check && check.n === rec.n) return rec;
+        } catch (e) {}
+        return null;
+    }
+    var monitor = setInterval(function () {
+        try {
+            if (handled) return;
+            var st = document.getElementById("state");
+            if (st && st.className === "ok") {
+                try { sessionStorage.removeItem(KEY); } catch (e) {}
+                handled = true;
+                clearInterval(monitor);
+                return;
+            }
+            if (!st || st.textContent.indexOf("FAILED") === -1) return;
+            var out = document.getElementById("out");
+            var txt = out ? out.textContent : "";
+            if (txt.indexOf("attempt-ceiling") === -1) return;
+            handled = true;
+            clearInterval(monitor);
+            var rec = spendBudget();
+            if (!rec || rec.n > MAX) return;
+            st.textContent = "layout de heap falhou -- recarregando para um novo heap (" + rec.n + "/2)...";
+            st.className = "warn";
+            setTimeout(function () { location.reload(); }, 2000);
+        } catch (e) { /* never break the exploit page */ }
+    }, 3000);
+})();
+</script></body>
+</html>
